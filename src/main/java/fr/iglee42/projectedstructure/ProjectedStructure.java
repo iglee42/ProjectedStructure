@@ -8,6 +8,7 @@ import fr.iglee42.projectedstructure.common.network.ModMessages;
 import fr.iglee42.projectedstructure.common.utils.ConfigStructures;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.common.MinecraftForge;
@@ -27,6 +28,7 @@ public class ProjectedStructure {
     public static final String MODID = "projectedstructure";
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final ModelProperty<BlockState> PS_BLOCKSTATE = new ModelProperty<>();
+    public static final ModelProperty<FluidState> PS_FLUIDSTATE = new ModelProperty<>();
 
     public ProjectedStructure() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();

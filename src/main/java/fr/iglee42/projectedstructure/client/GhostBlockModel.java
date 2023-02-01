@@ -11,10 +11,14 @@ import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.IModelData;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +27,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import static fr.iglee42.projectedstructure.ProjectedStructure.PS_BLOCKSTATE;
+import static fr.iglee42.projectedstructure.ProjectedStructure.PS_FLUIDSTATE;
 import static java.lang.Float.floatToRawIntBits;
 import static java.lang.Float.intBitsToFloat;
 
@@ -42,10 +47,12 @@ public class GhostBlockModel implements BakedModel {
             return Collections.emptyList();
         }
         BlockState mirrorState = data.get();
-        Supplier<List<BakedQuad>> quads = () -> this.render(mirrorState, state, DISPATCHER.get().getBlockModel(state), side, random, extraData);
+        Optional<FluidState> dataFluid = ModelDataUtils.getData(extraData, PS_FLUIDSTATE);
+        FluidState fluidState = dataFluid.get();
+
+        Supplier<List<BakedQuad>> quads = () -> this.render(fluidState,mirrorState, state, DISPATCHER.get().getBlockModel(state), side, random, extraData);
         if (MinecraftForgeClient.getRenderType() == RenderType.translucent()){
-            List<BakedQuad> quadList = quads.get();
-            return this.getOverlay(this.gatherAllQuads(quads));
+            return this.getOverlay(gatherAllQuads(quads));
         }
         return quads.get();
     }
@@ -57,8 +64,10 @@ public class GhostBlockModel implements BakedModel {
         }
         return quads;
     }
-    protected List<BakedQuad> render(@Nonnull BlockState mirrorState, @Nonnull BlockState baseState, @Nonnull BakedModel model, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData) {
-        return new ArrayList<>(model.getQuads(mirrorState, side, rand, extraData));
+    protected List<BakedQuad> render(FluidState fluidState,@Nonnull BlockState mirrorState, @Nonnull BlockState baseState, @Nonnull BakedModel model, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData) {
+        List<BakedQuad> quads = new ArrayList<>(model.getQuads(mirrorState, side, rand, extraData));
+        if (fluidState.getType() != Fluids.EMPTY)quads.addAll(new StructureFluidModel(fluidState.getType()).bake(null,null, ForgeModelBakery.defaultTextureGetter(), BlockModelRotation.X0_Y0, null,null).getQuads(fluidState.createLegacyBlock(),side,rand,extraData));
+        return quads;
     }
 
     @Override
@@ -153,4 +162,6 @@ public class GhostBlockModel implements BakedModel {
         ForgeHooksClient.setRenderType(layer);
         return quads;
     }
+
+
 }

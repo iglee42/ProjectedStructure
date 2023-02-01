@@ -44,7 +44,7 @@ public class ProjectorBlock extends BaseEntityBlock {
         if (level.isClientSide()) return InteractionResult.sidedSuccess(level.isClientSide());
         if (player.isCrouching()) {
             if (level.getBlockEntity(p_60505_) instanceof ProjectorBlockEntity be){
-                be.placeGhostBlocks();
+                be.removeGhostBlocks();
             }
         }
         return super.use(p_60503_, level, p_60505_, player, p_60507_, p_60508_);

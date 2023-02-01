@@ -58,6 +58,7 @@ public class ClientEvents {
     private static void put(Map<ResourceLocation, BakedModel> registry, Function<BakedModel, BakedModel> creator, Block block) {
         for (BlockState state : block.getStateDefinition().getPossibleStates()) {
             registry.put(BlockModelShaper.stateToModelLocation(state), creator.apply(registry.get(BlockModelShaper.stateToModelLocation(state))));
+
         }
     }
 }

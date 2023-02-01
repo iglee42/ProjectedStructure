@@ -87,7 +87,6 @@ public class ProjectorBlockEntity extends BlockEntity {
                         });
                         hasAllBlocks.set(false);
                     } else if (level.getBlockEntity(sbi.pos) instanceof GhostBlockEntity){
-                        level.getBlockEntity(sbi.pos,ModContent.GHOST_BLOCK_ENTITY.get()).ifPresent(be->((GhostBlockEntity)be).setDispearTime(-1));
                         hasAllBlocks.set(false);
                     } else if (!level.getBlockState(sbi.pos).is(ModContent.PROJECTOR_BLOCK.get())){
                         if (!level.getBlockState(sbi.pos).is(sbi.state.getBlock())) {
@@ -121,7 +120,7 @@ public class ProjectorBlockEntity extends BlockEntity {
             StructureTemplate.processBlockInfos(level,basePos,basePos,settings,settings.getRandomPalette(s.palettes, basePos).blocks(),s).forEach(sbi -> {
                 if (!sbi.state.isAir()) {
                     if (level.getBlockEntity(sbi.pos) instanceof GhostBlockEntity gbe){
-                        gbe.setDispearTime(40);
+                        level.setBlockAndUpdate(sbi.pos,Blocks.AIR.defaultBlockState());
                     }
                 }
             });

@@ -8,6 +8,7 @@ import fr.iglee42.projectedstructure.common.menu.ProjectorMenu;
 import fr.iglee42.projectedstructure.common.network.ModMessages;
 import fr.iglee42.projectedstructure.common.network.packets.ProjectorRotateC2S;
 import fr.iglee42.projectedstructure.common.utils.ConfigStructures;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -26,6 +27,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
@@ -49,6 +51,21 @@ import java.util.List;
 public class ProjectorItem extends Item {
     public ProjectorItem() {
         super(new Properties().stacksTo(1).tab(CreativeModeTab.TAB_TOOLS));
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level p_41422_, List<Component> components, TooltipFlag p_41424_) {
+        if (!stack.getOrCreateTag().contains("structureName")) components.add(append("Right Click","Select the Structure"));
+        else {
+            components.add(append("Selected Structure",stack.getOrCreateTag().getString("structureName")));
+            components.add(append("Left Click","Clear the selected Structure"));
+            components.add(append("Right Click on a Block","Fix the Structure on the ground"));
+            components.add(append("Scroll","Rotate the Structure"));
+        }
+    }
+
+    private Component append(String base,String adding){
+        return new TextComponent(base).withStyle(ChatFormatting.GOLD).append(new TextComponent(" : ").withStyle(ChatFormatting.DARK_GRAY)).append(new TextComponent(adding).withStyle(ChatFormatting.YELLOW));
     }
 
     @Override
@@ -102,7 +119,10 @@ public class ProjectorItem extends Item {
                         });
                     }
                     BlockPos projectorPos = pos;
-                    if (!level.getBlockState(pos.offset(1,0,0)).is(ModContent.GHOST_BLOCK.get())) {
+                    if (!level.getBlockState(pos).is(ModContent.GHOST_BLOCK.get())) {
+                        level.destroyBlock(pos.offset(1, 0, 0), true);
+                    }
+                    else if (!level.getBlockState(pos.offset(1,0,0)).is(ModContent.GHOST_BLOCK.get())) {
                         level.destroyBlock(pos.offset(1, 0, 0), true);
                         projectorPos = pos.offset(1,0,0);
                     }

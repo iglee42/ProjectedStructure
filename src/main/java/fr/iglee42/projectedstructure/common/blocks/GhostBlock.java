@@ -3,6 +3,8 @@ package fr.iglee42.projectedstructure.common.blocks;
 import fr.iglee42.projectedstructure.common.ModContent;
 import fr.iglee42.projectedstructure.common.blocks.entity.GhostBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -10,12 +12,15 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -35,6 +40,20 @@ public class GhostBlock extends BaseEntityBlock {
         return 1.0F;
     }
 
+    @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand p_60507_, BlockHitResult p_60508_) {
+        if (level.isClientSide()) return InteractionResult.sidedSuccess(level.isClientSide());
+        if (level.getBlockEntity(pos) instanceof GhostBlockEntity be){
+            if (be.getStockedBlock().is(be.getStockedBlock().getFluidState().createLegacyBlock().getBlock()) && be.getStockedBlock().getFluidState().getType() != Fluids.EMPTY){
+                if (player.getMainHandItem().is(be.getStockedBlock().getFluidState().getType().getBucket())){
+                    level.setBlockAndUpdate(pos,be.getStockedBlock().getFluidState().createLegacyBlock());
+                    if (!player.isCreative()) player.setItemInHand(InteractionHand.MAIN_HAND,new ItemStack(Items.BUCKET));
+                }
+            }
+
+        }
+        return super.use(state, level, pos, player, p_60507_, p_60508_);
+    }
 
     @Nullable
     @Override
@@ -56,7 +75,7 @@ public class GhostBlock extends BaseEntityBlock {
     @Override
     public boolean canBeReplaced(BlockState state, BlockPlaceContext placeContext) {
         boolean flag = false;
-        if (placeContext.getLevel().getBlockEntity(placeContext.getClickedPos()) instanceof GhostBlockEntity be && !state.getShape(placeContext.getLevel(),placeContext.getClickedPos(),CollisionContext.of(placeContext.getPlayer())).isEmpty())
+        if (placeContext.getLevel().getBlockEntity(placeContext.getClickedPos()) instanceof GhostBlockEntity be)
             flag = be.getStockedBlock().getBlock().asItem() == placeContext.getItemInHand().getItem();
         return flag;
     }
@@ -69,7 +88,11 @@ public class GhostBlock extends BaseEntityBlock {
 
     @Override
     public VoxelShape getShape(BlockState p_60479_, BlockGetter getter, BlockPos pos, CollisionContext context) {
-        return context.isHoldingItem(((GhostBlockEntity)getter.getBlockEntity(pos)).getStockedBlock().getBlock().asItem()) ? Shapes.block() : Shapes.box(0.4,0.4,0.4,0.6,0.6,0.6);
+        VoxelShape shape = Shapes.box(0.4,0.4,0.4,0.6,0.6,0.6);
+        if ((!context.isHoldingItem(Items.AIR))
+                && (context.isHoldingItem(((GhostBlockEntity)getter.getBlockEntity(pos)).getStockedBlock().getBlock().asItem())
+                || context.isHoldingItem(((GhostBlockEntity)getter.getBlockEntity(pos)).getStockedBlock().getFluidState().getType().getBucket()))) shape = Shapes.block();
+        return shape;
     }
 
 
