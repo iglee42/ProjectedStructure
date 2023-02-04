@@ -29,6 +29,6 @@ public class ModContent {
     public static final RegistryObject<MenuType<ProjectorMenu>> PROJECTOR_MENU = MENUS.register("projector_menu",()-> IForgeMenuType.create(ProjectorMenu::new));
 
     public static final RegistryObject<Block> GHOST_BLOCK = BLOCKS.register("ghost_block", GhostBlock::new);
-    public static final RegistryObject<BlockEntityType<?>> GHOST_BLOCK_ENTITY = BLOCK_ENTITIES.register("ghost_block",()->BlockEntityType.Builder.of(GhostBlockEntity::new,ModContent.GHOST_BLOCK.get()).build(null));
+    public static final RegistryObject<BlockEntityType<GhostBlockEntity>> GHOST_BLOCK_ENTITY = BLOCK_ENTITIES.register("ghost_block",()->BlockEntityType.Builder.of(GhostBlockEntity::new,ModContent.GHOST_BLOCK.get()).build(null));
 
 }

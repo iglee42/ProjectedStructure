@@ -6,6 +6,7 @@ import fr.iglee42.projectedstructure.common.blocks.entity.GhostBlockEntity;
 import fr.iglee42.projectedstructure.common.blocks.entity.ProjectorBlockEntity;
 import fr.iglee42.projectedstructure.common.menu.ProjectorMenu;
 import fr.iglee42.projectedstructure.common.network.ModMessages;
+import fr.iglee42.projectedstructure.common.network.packets.ProjectorClearStructureC2S;
 import fr.iglee42.projectedstructure.common.network.packets.ProjectorRotateC2S;
 import fr.iglee42.projectedstructure.common.utils.ConfigStructures;
 import net.minecraft.ChatFormatting;
@@ -57,16 +58,20 @@ public class ProjectorItem extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level p_41422_, List<Component> components, TooltipFlag p_41424_) {
         if (!stack.getOrCreateTag().contains("structureName")) components.add(append("Right Click","Select the Structure"));
         else {
-            components.add(append("Selected Structure",stack.getOrCreateTag().getString("structureName")));
+            String name = stack.getOrCreateTag().getString("structureName");
+            String firstChar = String.valueOf(name.charAt(0));
+            components.add(append("Selected Structure",firstChar.toUpperCase() + name.substring(1)));
             components.add(append("Left Click","Clear the selected Structure"));
             components.add(append("Right Click on a Block","Fix the Structure on the ground"));
-            components.add(append("Scroll","Rotate the Structure"));
+            components.add(append("Sneak + Scroll","Rotate the Structure"));
         }
     }
 
     private Component append(String base,String adding){
         return new TextComponent(base).withStyle(ChatFormatting.GOLD).append(new TextComponent(" : ").withStyle(ChatFormatting.DARK_GRAY)).append(new TextComponent(adding).withStyle(ChatFormatting.YELLOW));
     }
+
+
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
@@ -205,6 +210,12 @@ public class ProjectorItem extends Item {
                 }
                 event.setCanceled(true);
             }
+        }
+        @SubscribeEvent
+        public static void mouseClick(InputEvent.ClickInputEvent event){
+            if (!event.isAttack()) return;
+            if (Minecraft.getInstance().player.getMainHandItem().is(ModContent.PROJECTOR.get()) && Minecraft.getInstance().player.getMainHandItem().getOrCreateTag().contains("structureName"))
+                ModMessages.sendToServer(new ProjectorClearStructureC2S(Minecraft.getInstance().player.getUUID()));
         }
     }
 }

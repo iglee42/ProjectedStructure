@@ -38,6 +38,11 @@ public class ModMessages {
                 .encoder(ProjectorRotateC2S::toBytes)
                 .consumer(ProjectorRotateC2S::handle)
                 .add();
+        net.messageBuilder(ProjectorClearStructureC2S.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(ProjectorClearStructureC2S::new)
+                .encoder(ProjectorClearStructureC2S::toBytes)
+                .consumer(ProjectorClearStructureC2S::handle)
+                .add();
 
     }
 

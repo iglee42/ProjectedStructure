@@ -2,6 +2,7 @@ package fr.iglee42.projectedstructure;
 
 import com.mojang.logging.LogUtils;
 import fr.iglee42.projectedstructure.client.ClientEvents;
+import fr.iglee42.projectedstructure.client.GhostBlockRenderer;
 import fr.iglee42.projectedstructure.client.ProjectorScreen;
 import fr.iglee42.projectedstructure.common.ModContent;
 import fr.iglee42.projectedstructure.common.network.ModMessages;
@@ -10,6 +11,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -54,6 +56,12 @@ public class ProjectedStructure {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             MenuScreens.register(ModContent.PROJECTOR_MENU.get(), ProjectorScreen::new);
+        }
+        @SubscribeEvent
+        public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
+            event.registerBlockEntityRenderer(ModContent.GHOST_BLOCK_ENTITY.get(),
+                    GhostBlockRenderer::new);
+
         }
     }
 
