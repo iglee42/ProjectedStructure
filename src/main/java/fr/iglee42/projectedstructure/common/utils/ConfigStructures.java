@@ -37,10 +37,12 @@ public class ConfigStructures {
 
     private static List<String> readStructureDir(File dir){
         List<String> structures = new ArrayList<>();
-        for (String file : dir.list()) {
-            File f = new File(dir, file);
-            if (f.isDirectory()) structures.addAll(readStructureDir(f));
-            else if (f.getName().endsWith(".nbt")) structures.add(file.substring(0,file.length() - 4));
+        if (dir.exists()) {
+            for (String file : dir.list()) {
+                File f = new File(dir, file);
+                if (f.isDirectory()) structures.addAll(readStructureDir(f));
+                else if (f.getName().endsWith(".nbt")) structures.add(file.substring(0, file.length() - 4));
+            }
         }
         return structures;
     }

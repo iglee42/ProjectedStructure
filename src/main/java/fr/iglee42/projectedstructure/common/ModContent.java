@@ -3,6 +3,7 @@ package fr.iglee42.projectedstructure.common;
 import fr.iglee42.projectedstructure.ProjectedStructure;
 import fr.iglee42.projectedstructure.common.blocks.GhostBlock;
 import fr.iglee42.projectedstructure.common.blocks.ProjectorBlock;
+import fr.iglee42.projectedstructure.common.blocks.WarningBlock;
 import fr.iglee42.projectedstructure.common.blocks.entity.GhostBlockEntity;
 import fr.iglee42.projectedstructure.common.blocks.entity.ProjectorBlockEntity;
 import fr.iglee42.projectedstructure.common.menu.ProjectorMenu;
@@ -27,6 +28,8 @@ public class ModContent {
     public static final RegistryObject<Block> PROJECTOR_BLOCK = BLOCKS.register("projector", ProjectorBlock::new);
     public static final RegistryObject<BlockEntityType<?>> PROJECTOR_BLOCK_ENTITY = BLOCK_ENTITIES.register("projector_block",()->BlockEntityType.Builder.of(ProjectorBlockEntity::new,ModContent.PROJECTOR_BLOCK.get()).build(null));
     public static final RegistryObject<MenuType<ProjectorMenu>> PROJECTOR_MENU = MENUS.register("projector_menu",()-> IForgeMenuType.create(ProjectorMenu::new));
+
+    public static final RegistryObject<Block> WARNING_BLOCK = BLOCKS.register("warning", WarningBlock::new);
 
     public static final RegistryObject<Block> GHOST_BLOCK = BLOCKS.register("ghost_block", GhostBlock::new);
     public static final RegistryObject<BlockEntityType<GhostBlockEntity>> GHOST_BLOCK_ENTITY = BLOCK_ENTITIES.register("ghost_block",()->BlockEntityType.Builder.of(GhostBlockEntity::new,ModContent.GHOST_BLOCK.get()).build(null));

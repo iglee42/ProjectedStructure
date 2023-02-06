@@ -74,10 +74,7 @@ public class GhostBlock extends BaseEntityBlock {
 
     @Override
     public boolean canBeReplaced(BlockState state, BlockPlaceContext placeContext) {
-        boolean flag = false;
-        if (placeContext.getLevel().getBlockEntity(placeContext.getClickedPos()) instanceof GhostBlockEntity be)
-            flag = be.getStockedBlock().getBlock().asItem() == placeContext.getItemInHand().getItem();
-        return flag;
+        return true;
     }
 
     @Override
@@ -87,12 +84,9 @@ public class GhostBlock extends BaseEntityBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState p_60479_, BlockGetter getter, BlockPos pos, CollisionContext context) {
-        VoxelShape shape = Shapes.box(0.4,0.4,0.4,0.6,0.6,0.6);
-        if ((!context.isHoldingItem(Items.AIR))
-                && (context.isHoldingItem(((GhostBlockEntity)getter.getBlockEntity(pos)).getStockedBlock().getBlock().asItem())
-                || context.isHoldingItem(((GhostBlockEntity)getter.getBlockEntity(pos)).getStockedBlock().getFluidState().getType().getBucket()))) shape = Shapes.block();
-        return shape;
+    public VoxelShape getShape(BlockState state, BlockGetter getter, BlockPos pos, CollisionContext context) {
+        GhostBlockEntity be = (GhostBlockEntity) getter.getBlockEntity(pos);
+        return be.getStockedBlock().is(Blocks.AIR) ? Shapes.empty() : be.getStockedBlock().getShape(getter,pos,context);
     }
 
 

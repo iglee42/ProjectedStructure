@@ -64,6 +64,8 @@ public class ProjectorItem extends Item {
             components.add(append("Left Click","Clear the selected Structure"));
             components.add(append("Right Click on a Block","Fix the Structure on the ground"));
             components.add(append("Sneak + Scroll","Rotate the Structure"));
+            components.add(append("When place + Shift & Right Click","Replace ghost blocks"));
+            components.add(new TextComponent("If you have exclamation point on a block, it means that the block is not the right one").withStyle(ChatFormatting.RED));
         }
     }
 

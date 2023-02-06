@@ -82,15 +82,23 @@ public class ProjectorBlockEntity extends BlockEntity {
                     if (level.getBlockState(sbi.pos).is(Blocks.AIR)) {
                         level.setBlockAndUpdate(sbi.pos, ModContent.GHOST_BLOCK.get().defaultBlockState());
                         level.getBlockEntity(sbi.pos, ModContent.GHOST_BLOCK_ENTITY.get()).ifPresent(g -> {
-                            ((GhostBlockEntity) g).setStockedBlock(sbi.state);
-                            ((GhostBlockEntity) g).setDispearTime(-1);
+                            g.setStockedBlock(sbi.state);
+                            g.setDispearTime(-1);
                         });
                         hasAllBlocks.set(false);
                     } else if (level.getBlockEntity(sbi.pos) instanceof GhostBlockEntity){
                         hasAllBlocks.set(false);
+                        if (level.getBlockState(sbi.pos.offset(0,1,0)).is(ModContent.WARNING_BLOCK.get())){
+                            level.setBlockAndUpdate(sbi.pos.offset(0,1,0),Blocks.AIR.defaultBlockState());
+                        }
                     } else if (!level.getBlockState(sbi.pos).is(ModContent.PROJECTOR_BLOCK.get())){
                         if (!level.getBlockState(sbi.pos).is(sbi.state.getBlock())) {
                             hasAllBlocks.set(false);
+                            if (level.getBlockState(sbi.pos.offset(0,1,0)).is(Blocks.AIR)){
+                                level.setBlockAndUpdate(sbi.pos.offset(0,1,0),ModContent.WARNING_BLOCK.get().defaultBlockState());
+                            }
+                        } else if (level.getBlockState(sbi.pos.offset(0,1,0)).is(ModContent.WARNING_BLOCK.get())){
+                            level.setBlockAndUpdate(sbi.pos.offset(0,1,0),Blocks.AIR.defaultBlockState());
                         }
                     }
                 }
@@ -121,6 +129,8 @@ public class ProjectorBlockEntity extends BlockEntity {
                 if (!sbi.state.isAir()) {
                     if (level.getBlockEntity(sbi.pos) instanceof GhostBlockEntity gbe){
                         level.setBlockAndUpdate(sbi.pos,Blocks.AIR.defaultBlockState());
+                    } else if (level.getBlockState(sbi.pos.offset(0,1,0)).is(ModContent.WARNING_BLOCK.get())){
+                        level.setBlockAndUpdate(sbi.pos.offset(0,1,0),Blocks.AIR.defaultBlockState());
                     }
                 }
             });

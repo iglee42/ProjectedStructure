@@ -21,6 +21,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -88,7 +89,8 @@ public class ProjectorScreen extends AbstractContainerScreen<ProjectorMenu> {
             AtomicInteger pageIndex = new AtomicInteger(0);
             List<String> paths = ConfigStructures.getStructuresPaths();
             List<String> allStructures = new ArrayList<>();
-            menu.getStructures().forEach(s->allStructures.add(s));
+            allStructures.addAll(menu.getStructures());
+
             menu.getStructures().forEach(r->{
                 String path = paths.stream().filter(s->s.endsWith(r)).findFirst().orElse("Unknown Path");
                 paths.remove(path);
@@ -118,16 +120,22 @@ public class ProjectorScreen extends AbstractContainerScreen<ProjectorMenu> {
             }));
 
         }
+
         if (currentPage >= pages.size()) currentPage = pages.size() - 1;
         this.pages.stream().filter(l->pages.indexOf(l) != currentPage).forEach(l->l.forEach(b->b.active = false));
-        this.pages.get(currentPage).forEach(b->{
-            if (selectedButton != b)b.active = true;
-            if (!renderables.contains(b)) addRenderableWidget(b);
-        });
+        if (!pages.isEmpty()) {
+            this.pages.get(currentPage).forEach(b -> {
+                if (selectedButton != b) b.active = true;
+                if (!renderables.contains(b)) addRenderableWidget(b);
+            });
+        }
         addRenderableWidget(previousPageButton);
         addRenderableWidget(nextPageButton);
         super.render(poseStack,mouseX,mouseY,light);
         this.renderTooltip(poseStack, mouseX, mouseY);
+        if (menu.getStructures() == null || menu.getStructures().isEmpty()){
+            drawCenteredString(poseStack,font,"There is no structure !",centerX + 50,centerY-30, Color.WHITE.getRGB());
+        }
         menu.tick++;
         if (selectedButton != null){
             this.pages.forEach(l->l.stream().filter(b -> selectedButton.equals(b)).findFirst().ifPresent(b->b.active = false));
