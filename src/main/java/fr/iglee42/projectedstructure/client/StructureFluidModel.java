@@ -120,7 +120,7 @@ public final class StructureFluidModel implements IModelGeometry<StructureFluidM
                 IModelData state = stateOption.get();
                 for (int i = 0; i < 4; i++)
                 {
-                    Float level = null; // TODO fluids state.getValue(BlockFluidBase.LEVEL_CORNERS[i]);
+                    Float level = null;
                     cornerRound[i] = Math.round((level == null ? 8f / 9f : level) * 864);
                 }
             }
@@ -139,7 +139,7 @@ public final class StructureFluidModel implements IModelGeometry<StructureFluidM
             Float flow = -1000f;
             if (stateOption.isPresent())
             {
-                flow = null; // TODO fluids stateOption.get().getValue(BlockFluidBase.FLOW_DIRECTION);
+                flow = null;
                 if (flow == null) flow = -1000f;
             }
             int flowRound = (int) Math.round(Math.toDegrees(flow));
@@ -162,7 +162,7 @@ public final class StructureFluidModel implements IModelGeometry<StructureFluidM
                 IModelData state = stateOption.get();
                 for (int i = 0; i < 4; i++)
                 {
-                    Boolean overlay = null; // TODO fluids state.getValue(BlockFluidBase.SIDE_OVERLAYS[i]);
+                    Boolean overlay = null;
                     if (overlay != null) overlaySides[i] = overlay;
                 }
             }
