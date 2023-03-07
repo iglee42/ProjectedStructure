@@ -11,4 +11,4 @@ jobs:
                 java-version: '17'
                 cache: 'gradle'
                 check-latest: true
-            - run: gradlew build --no-daemon
+            - run: ./gradlew build --no-daemon
